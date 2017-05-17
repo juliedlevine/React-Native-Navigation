@@ -19,8 +19,9 @@ const HomeNavigator = StackNavigator({
 });
 
 const MainApp = TabNavigator({
-    Home: { screen: HomeNavigator },
+    // Swap these back when settings page is done
     Settings: { screen: Settings },
+    Home: { screen: HomeNavigator },
     About: { screen: About },
     Logout: { screen: Logout }
 }, {
