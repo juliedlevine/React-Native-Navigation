@@ -1,26 +1,16 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { AppRegistry, Text, View, Button, StyleSheet, Image, TextInput, ListView, ScrollView } from 'react-native';
-import { TabNavigator } from 'react-navigation';
-import styles from './Styles';
+import axios from 'axios';
+import { getExpenseData } from '../actions';
 
-export default class Settings extends React.Component {
-    constructor() {
-    let mainCategories = ['Food', 'Housing', 'Giving', 'Transportation', 'Insurance and Taxes', 'Loans', 'Miscellaneous'];
-    // let mainCategories = [];
+class Settings extends React.Component {
 
-    super();
-        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        this.state = {
-            mainCategories: ds.cloneWithRows(mainCategories),
-            subCategories: ds.cloneWithRows(['SubCatA', 'SubCatB', 'SubCatC'])
-        };
+    componentDidMount() {
+      console.log('sending token: ', this.props.user.token);
+      this.props.getExpenseData(this.props.user.token);
+
     }
-
-    static navigationOptions = {
-        tabBarLabel: 'Settings',
-        tabBarIcon: ({ tintColor }) => (
-            <Image source={require('../Resources/settings.png')} style={styles.icon} />),
-    };
 
     render() {
         const ds2 = new ListView.DataSource({
@@ -127,7 +117,8 @@ export default class Settings extends React.Component {
 
         return (
             <View style={styles.container}>
-                <Image source={require('../Resources/settings.png')} style={styles.icon} />
+                <Text>{this.props.user.firstName}</Text>
+                <Image source={require('./Resources/settings.png')} style={styles.icon} />
                 <Text style={styles.container}>Settings / Configuration Page</Text>
                 <ListView style={{alignSelf: 'stretch'}} dataSource={element}
                     renderSectionHeader={(sectionData, sectionID) =>
@@ -150,11 +141,64 @@ export default class Settings extends React.Component {
 
 
                         />
-                <Button
-                    onPress={() => this.props.navigation.navigate('UserHome')}
-                    title="Go to User Home" />
+
             </View>
         );
 
     }
 }
+
+const styles = {
+    container: {
+        padding: 30,
+        marginTop: 30,
+        alignItems: 'center'
+    },
+    description: {
+        marginBottom: 20,
+        fontSize: 18,
+        textAlign: 'center',
+        color: '#656565'
+    },
+    icon: {
+        width: 20,
+        height: 20,
+    },
+    button: {
+        height: 36,
+        backgroundColor: '#48BBEC',
+        borderColor: '#48BBEC',
+        borderWidth: 1,
+        borderRadius: 8,
+        alignSelf: 'stretch',
+        justifyContent: 'center'
+    },
+    buttonText: {
+        fontSize: 18,
+        color: 'white',
+        alignSelf: 'center'
+    },
+    searchInput: {
+        height: 36,
+        padding: 4,
+        marginBottom: 10,
+        fontSize: 16,
+        borderWidth: 1,
+        borderColor: '#48BBEC',
+        borderRadius: 8,
+        color: 'black'
+    },
+    separator: {
+        height: 40,
+    },
+    account: {
+        marginTop: 50,
+        marginBottom: 10,
+    }
+};
+
+const mapStateToProps = (state) => {
+  return { user: state.auth.user, expenses: state.expenses };
+};
+
+export default connect(mapStateToProps, { getExpenseData })(Settings);

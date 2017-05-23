@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import { AppRegistry, Text, View, Button, Image, TouchableHighlight, TextInput } from 'react-native';
+import { connect } from 'react-redux';
+import { Actions } from 'react-native-router-flux';
+import { createUserAccount } from '../actions';
+import { Spinner } from './common';
 
 console.disableYellowBox = true;
 
@@ -12,6 +16,7 @@ class Signup extends Component {
             email: '',
             password: '',
             confirm: '',
+            error: '',
         };
     }
 
@@ -24,17 +29,33 @@ class Signup extends Component {
     email(event) {
         this.setState({ email: event.nativeEvent.text });
     }
-    password(event) {
-        this.setState({ password: event.nativeEvent.text });
+    password(text) {
+        this.setState({ password: text });
+        if (text !== this.state.confirm){
+          this.setState({ error: 'Passwords much match'});
+        } else {
+          this.setState({ error: '' });
+        }
     }
-    confirm(event) {
-        this.setState({ confirm: event.nativeEvent.text });
+    confirm(text) {
+        this.setState({ confirm: text });
+        if (this.state.password !== text){
+          this.setState({ error: 'Passwords much match'});
+        } else {
+          this.setState({ error: '' });
+        }
     }
 
-    signIn() {
+    signUp() {
         let email = this.state.email;
         let password = this.state.password;
-        console.log('Email:', email, 'Password:', password);
+        let first = this.state.first;
+        let last = this.state.last;
+        if (this.state.password === this.state.confirm){
+          console.log('starting signup');
+          this.props.createUserAccount(first, last, email, password)
+        }
+
     }
 
     render() {
@@ -60,17 +81,20 @@ class Signup extends Component {
                 <TextInput
                     style={styles.searchInput}
                     placeholder='Password'
-                    onChange={this.password.bind(this)}
+                    onChangeText={text => this.password(text)}
                     secureTextEntry={true}
                     value={this.state.password} />
                 <TextInput
                     style={styles.searchInput}
                     placeholder='Confirm password'
-                    onChange={this.confirm.bind(this)}
+                    onChangeText={text => this.confirm(text)}
                     secureTextEntry={true}
                     value={this.state.confirm} />
+                <Text>
+                  {this.state.error}
+                </Text>
                 <TouchableHighlight style={styles.button} underlayColor='#99d9f4'>
-                    <Text style={styles.buttonText} onPress={() => console.log("you clicked this thing!")}>Sign Up</Text>
+                    <Text style={styles.buttonText} onPress={() => this.signUp()}>Sign Up</Text>
                 </TouchableHighlight>
 
           </View>
@@ -127,4 +151,10 @@ const styles = {
     }
 };
 
-export default SignUp;
+// const mapStateToProps = (state) => {
+//   return { signUpEmail: state.auth.signUpEmail, signUpPassword: state.auth.signUpPassword, signUpError: state.auth.signUpError, signUpLoading: state.auth.signUpLoading };
+// };
+//
+export default connect(null, { createUserAccount })(Signup);
+
+// export default Signup;

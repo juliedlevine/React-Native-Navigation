@@ -127,4 +127,4 @@ const styles = {
     }
 };
 
-export default SignUp;
+export default Signup;

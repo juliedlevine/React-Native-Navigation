@@ -39,6 +39,17 @@ export default class Home extends React.Component {
     }
 
     render() {
+
+        fetch('https://facebook.github.io/react-native/movies.json')
+        .then((response) => response.json())
+        .then((responseJson) => {
+          return responseJson.movies;
+        })
+        .then(val => console.log('movies: ', val))
+        .catch((error) => {
+          console.error(error);
+        });
+
         return (
             <View style={styles.container}>
                 <Image source={require('../Resources/home.png')} style={styles.icon} />
